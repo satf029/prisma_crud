@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 export const getUsers = async (req: Request, res: Response) => {
     const users = await prisma.user.findMany();
@@ -7,8 +8,9 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
  try {
-    const { name, email } = req.body;
-    const user = await prisma.user.create({ data: { name, email } });
+    const { name, email, password } = req.body;
+    const hashpassword = await bcrypt.hash(password,10);
+    const user = await prisma.user.create({ data: { name, email, password: hashpassword } });
     res.json(user);
  } catch (error) {
     next(error);
