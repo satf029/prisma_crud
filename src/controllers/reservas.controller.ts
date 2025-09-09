@@ -66,3 +66,16 @@ export const borrarReserva = async (req: Request, res: Response, next: NextFunct
         next(error);
     };
 }
+
+export const getReservasByUser = async(req: Request, res: Response, next: NextFunction)=>{
+    const {id} = req.params;
+    try {
+        const reservasByUser = await prisma.reserva.findMany({
+            where:{userId:Number(id)}
+        })
+
+        res.json(reservasByUser);
+    } catch (error) {
+        res.status(500).json({ error: "Error al obtener reservas del usuario" });
+    }
+}

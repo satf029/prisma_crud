@@ -1,12 +1,48 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <title>Reservas</title>
 </head>
-<body>
-    <h1>Reservas</h1>
-    
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="text-center mb-4 text-primary">Reservas</h1> 
+                <div id="reservas-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script> 
+        async function loadReservas() { 
+            const token = localStorage.getItem("token"); 
+            const userId = localStorage.getItem("userId");  
+            const res = await fetch(`http://localhost:3000/api/reserva/byuser/${userId}` , { 
+                headers: { Authorization: `Bearer ${token}` } 
+            }); 
+            
+            if (res.ok) { 
+                const reservas = await res.json(); 
+                const container = document.getElementById("reservas-list"); 
+                container.innerHTML = reservas.map(r => ` 
+                <div class="card mb-3 shadow-sm"> 
+                    <div class="card-body">
+                        <p class="card-text"><strong>ID Reserva:</strong> ${r.id}</p> 
+                        <p class="card-text"><strong>Fecha:</strong> ${r.fecha}</p> 
+                        <p class="card-text"><strong>Detalle:</strong> ${r.detalle}</p> 
+                    </div>
+                </div> 
+                `).join(""); 
+            } else { 
+                document.getElementById("reservas-list").innerHTML = '<div class="alert alert-danger text-center">No se pudieron cargar las reservas.</div>'; 
+            } 
+        } 
+        // Cargar reservas al abrir la página 
+        window.onload = loadReservas; 
+    </script> 
 </body>
 </html>

@@ -8,10 +8,10 @@ import loginRoutes from "./routes/login.routes"
 
 
 const app = Express();
-
+app.use(cors());
 app.use(Express.json());
 app.use(logger);
-app.use(cors);
+
 app.use('/api',userRoutes);
 app.use('/api',reservasRoutes)
 app.use('/api',loginRoutes);
